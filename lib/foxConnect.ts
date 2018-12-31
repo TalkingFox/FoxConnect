@@ -2,14 +2,14 @@ import { Observable, throwError } from 'rxjs';
 import { ajax, AjaxError, AjaxResponse } from 'rxjs/ajax';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { IotClient } from './iot/iotClient';
-import { FoxConnectOptions } from './foxConnectOptions';
+import { FoxConnectOptions } from './models/foxConnectOptions';
 import { GuestRequest } from './models/clientRequest';
 import { AcceptGuestRequest } from './iot/iotRequest';
 import { HostResponse } from './models/hostResponse';
 import { JoinRoomResponse } from './models/joinRoomResponse';
 import { JoinRoomRequest } from './models/joinRoomRequest';
 
-export class RoomService {
+export class FoxConnect {
     private iot: IotClient;
 
     constructor(private options: FoxConnectOptions) {
@@ -40,7 +40,7 @@ export class RoomService {
         ajax.delete(endpoint, headers).subscribe();
     }
 
-    public readGuestBook(room: string): Observable<GuestRequest> {
+    public listenForGuests(room: string): Observable<GuestRequest> {
         this.iot.subscribeAll(room);
         return this.iot.requests;
     }
@@ -60,10 +60,8 @@ export class RoomService {
         ).subscribe();
     }
 
-    public bookRoom(request: JoinRoomRequest): Observable<HostResponse> {
-        const endpoint = `${this.options.signalServer}/rooms/${
-            request.room
-        }/join`;
+    public joinRoom(request: JoinRoomRequest): Observable<HostResponse> {
+        const endpoint = `${this.options.signalServer}/rooms/${request.room}/join`;
         const headers = this.getHeaders();
         return ajax
             .post(

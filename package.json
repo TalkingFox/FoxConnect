@@ -2,9 +2,10 @@
   "name": "foxp2p",
   "version": "0.0.1",
   "description": "Establishing a direct connection between two browser instances",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
@@ -17,11 +18,11 @@
   },
   "homepage": "https://github.com/TalkingFox/FoxP2P#readme",
   "devDependencies": {
+    "@types/aws-iot-device-sdk": "^2.1.1",
     "typescript": "^3.2.2",
     "typings": "^2.1.1"
   },
   "dependencies": {
-    "@types/aws-iot-device-sdk": "^2.1.1",
     "aws-iot-device-sdk": "^2.2.1",
     "rxjs": "^6.3.3"
   }

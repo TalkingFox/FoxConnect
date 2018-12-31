@@ -4,7 +4,7 @@ import { HostResponse } from '../models/hostResponse';
 import { IotResponse } from './iotResponse';
 import { ConnectType } from "./connectType";
 import { Observable, Subject } from 'rxjs';
-import { FoxConnectOptions } from '../foxConnectOptions';
+import { FoxConnectOptions } from '../models/foxConnectOptions';
 
 export class IotClient {
     public requests: Observable<GuestRequest>;
