@@ -1,5 +1,5 @@
 {
-  "name": "foxp2p",
+  "name": "foxconnect",
   "version": "0.0.1",
   "description": "Establishing a direct connection between two browser instances",
   "main": "dist/foxConnect.js",
