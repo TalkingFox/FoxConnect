@@ -2,8 +2,8 @@
   "name": "foxp2p",
   "version": "0.0.1",
   "description": "Establishing a direct connection between two browser instances",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/foxConnect.js",
+  "types": "dist/foxConnect.d.ts",
   "scripts": {
     "build": "tsc"
   },
