@@ -1,4 +1,4 @@
-import { IotResponse } from './iotResponse';
+import { IotResponse } from '../iot/iotResponse';
 
 export interface GuestRequest extends IotResponse {
     room: string;

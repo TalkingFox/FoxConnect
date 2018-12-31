@@ -1,5 +1,5 @@
-export class AcceptGuestRequest {
-    public answer: string;
-    public guestId: string;
-    public room: string;
+export interface AcceptGuestRequest {
+    answer: string;
+    guestId: string;
+    room: string;
 }

@@ -3,17 +3,17 @@ import { ajax, AjaxError, AjaxResponse } from 'rxjs/ajax';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { IotClient } from './iot/iotClient';
 import { FoxConnectOptions } from './foxConnectOptions';
-import { GuestRequest } from './iot/clientRequest';
+import { GuestRequest } from './models/clientRequest';
 import { AcceptGuestRequest } from './iot/iotRequest';
-import { HostResponse } from './iot/hostResponse';
-import { JoinRoomResponse } from './iot/joinRoomResponse';
+import { HostResponse } from './models/hostResponse';
+import { JoinRoomResponse } from './models/joinRoomResponse';
 import { JoinRoomRequest } from './models/joinRoomRequest';
 
 export class RoomService {
-    private iot: IotClient;    
+    private iot: IotClient;
 
     constructor(private options: FoxConnectOptions) {
-        this.iot = new IotClient(`In-Control-Host-${Math.floor(Math.random() * 1000000 + 1)}`);
+        this.iot = new IotClient(options);
     }
 
     public createRoom(): Observable<string> {
@@ -23,7 +23,7 @@ export class RoomService {
             .post(
                 endpoint,
                 {
-                    host: this.iot.clientId
+                    host: this.options.clientId
                 },
                 headers
             )
