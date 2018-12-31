@@ -1,6 +1,6 @@
 {
   "name": "foxconnect",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "Establishing a direct connection between two browser instances",
   "main": "dist/foxConnect.js",
   "types": "dist/foxConnect.d.ts",
@@ -24,6 +24,6 @@
   },
   "dependencies": {
     "aws-iot-device-sdk": "^2.2.1",
-    "rxjs": "^6.0.0"
+    "rxjs": "6.2.2"
   }
 }
