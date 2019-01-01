@@ -82,7 +82,7 @@ export class Client {
                         })
                 );
         });
-        
+
         const promise = TimedPromise<void>(30 * 1000, (resolve, reject) => {
             this.peer.on('connect', () => {
                 this.peer.on('data', this.onMessageReceived);
@@ -90,5 +90,9 @@ export class Client {
             });
         });
         return promise;
+    }
+
+    public send<T>(message: T): void {
+        this.peer.send(JSON.stringify(message));
     }
 }
