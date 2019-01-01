@@ -14,6 +14,7 @@ export class IotClient {
     
     private device: device;
     private decoder: TextDecoder = new TextDecoder('utf-8');
+    private subscriptions: string[] = [];
 
     constructor(private options: FoxConnectOptions) {
         this.device = new device({
@@ -30,12 +31,22 @@ export class IotClient {
     }
 
     public subscribe(topic: string, callback: JoinCallback): void {
+        this.responses = callback;
         this.device.subscribe(topic);
+        this.subscriptions.push(topic);
     }
 
     public subscribeAll(room: string, callback: ListenCallback): void {
         this.requests = callback;
-        this.device.subscribe('rooms/' + room + '/#');
+        const topic = 'rooms/' + room + '/#';
+        this.device.subscribe(topic);
+        this.subscriptions.push(topic);
+    }
+
+    public unsubscribe(): void {
+        this.subscriptions.forEach((topic: string) => {
+            this.device.unsubscribe(topic);
+        });
     }
 
     private attachEvents(): void {

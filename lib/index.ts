@@ -7,9 +7,14 @@ import { HostResponse } from "./models/hostResponse";
 import { JoinRoomResponse } from "./models/joinRoomResponse";
 import Peer, { Instance } from 'simple-peer';
 import { TimedPromise } from "./util/timedPromise";
+import { GuestRequest } from "./models/clientRequest";
+
+export type GuestCallback = (guestName: string) => void;
 
 export class Host {
     private iot: IotClient;
+    private connections: Map<string, Instance> = new Map<string, Instance>();
+    private onMessageReceived: MessageReceivedCallback;
 
     constructor(private options: FoxConnectOptions) {
         this.iot = new IotClient(options);
@@ -26,14 +31,38 @@ export class Host {
 
     public freeRoom(room: string): Promise<void> {
         const endpoint = `${this.options.signalServer}/rooms/${room}`;
+        this.iot.unsubscribe();
         return HttpUtils.delete(endpoint);
     }
 
-    public listenForGuests(room: string, callback: ListenCallback): void {
-        this.iot.subscribeAll(room, callback);
+    public listenForGuests(room: string, guestJoinedCallback: GuestCallback): void {
+        this.iot.subscribeAll(room, (request: GuestRequest) => {
+            const newPeer = new Peer({
+                initiator: false,
+                trickle: false
+            });
+            newPeer.signal(request.offer);
+            newPeer.on('signal', (id: any) => {
+                const response: AcceptGuestRequest = {
+                    answer: id,
+                    guestId: request.id,
+                    room: request.room
+                };
+                this.registerGuest(response);
+            })
+            newPeer.on('connect', () => {
+                this.connections.set(request.name, newPeer);
+                guestJoinedCallback(request.name);
+                newPeer.on('data', this.onMessageReceived);
+            });
+        });
     }
 
-    public registerGuest(request: AcceptGuestRequest): Promise<void> {
+    public listenForMessages(callback: MessageReceivedCallback): void {
+        this.onMessageReceived = callback;
+    }
+
+    private registerGuest(request: AcceptGuestRequest): Promise<void> {
         const endpoint = `${this.options.signalServer}/rooms/${request.room}/accept`;
         return HttpUtils.post(
             endpoint,
