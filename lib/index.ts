@@ -42,7 +42,7 @@ export class Host {
     }
 }
 
-export class InnerClient {
+export class Client {
     private iot: IotClient;
 
     constructor(private options: FoxConnectOptions) {
