@@ -24,7 +24,7 @@ export class HttpUtils {
 
             http.onreadystatechange = function () {
                 if (this.readyState === XMLHttpRequest.DONE) {
-                    resolve(JSON.parse(this.responseText));
+                    resolve(this.response);
                 }
                 if (this.status > 399) {
                     reject(this.statusText);
