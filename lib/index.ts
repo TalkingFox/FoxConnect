@@ -6,7 +6,7 @@ import { JoinRoomRequest } from "./models/joinRoomRequest";
 import { HostResponse } from "./models/hostResponse";
 import { JoinRoomResponse } from "./models/joinRoomResponse";
 
-export module FoxConnect {
+export namespace FoxConnect {
     export class Host {
         private iot: IotClient;
 
