@@ -2,8 +2,8 @@
   "name": "foxconnect",
   "version": "0.0.4",
   "description": "Establishing a direct connection between two browser instances",
-  "main": "dist/foxConnect.js",
-  "types": "dist/foxConnect.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc"
   },
@@ -19,11 +19,12 @@
   "homepage": "https://github.com/TalkingFox/FoxP2P#readme",
   "devDependencies": {
     "@types/aws-iot-device-sdk": "^2.1.1",
+    "@types/simple-peer": "^6.1.5",
     "typescript": "^3.2.2",
     "typings": "^2.1.1"
   },
   "dependencies": {
     "aws-iot-device-sdk": "^2.2.1",
-    "rxjs": "6.2.2"
+    "simple-peer": "^9.2.0"
   }
 }

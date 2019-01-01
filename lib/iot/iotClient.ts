@@ -3,24 +3,19 @@ import { GuestRequest } from '../models/clientRequest';
 import { HostResponse } from '../models/hostResponse';
 import { IotResponse } from './iotResponse';
 import { ConnectType } from "./connectType";
-import { Observable, Subject } from 'rxjs';
 import { FoxConnectOptions } from '../models/foxConnectOptions';
 
+export type ListenCallback = (request: GuestRequest) => void;
+export type JoinCallback = (request: HostResponse) => void;
+
 export class IotClient {
-    public requests: Observable<GuestRequest>;
-    public responses: Observable<HostResponse>;
+    private requests: ListenCallback = () => {};
+    public responses: JoinCallback = () => {};
     
     private device: device;
     private decoder: TextDecoder = new TextDecoder('utf-8');
-    private requests$: Subject<GuestRequest>;
-    private responses$: Subject<HostResponse>;
 
     constructor(private options: FoxConnectOptions) {
-        this.requests$ = new Subject<GuestRequest>();
-        this.requests = this.requests$.asObservable();
-        this.responses$ = new Subject<HostResponse>();
-        this.responses = this.responses$.asObservable();
-
         this.device = new device({
             accessKeyId: this.options.awsAccessKey,
             baseReconnectTimeMs: 250,
@@ -34,11 +29,12 @@ export class IotClient {
         this.attachEvents();
     }
 
-    public subscribe(topic: string): void {
+    public subscribe(topic: string, callback: JoinCallback): void {
         this.device.subscribe(topic);
     }
 
-    public subscribeAll(room: string): void {
+    public subscribeAll(room: string, callback: ListenCallback): void {
+        this.requests = callback;
         this.device.subscribe('rooms/' + room + '/#');
     }
 
@@ -48,9 +44,9 @@ export class IotClient {
             const data = JSON.parse(message) as IotResponse;
             if (data.type === ConnectType.Offer) {
                 data.id = topic.split('/').pop() as string;
-                this.requests$.next(data as GuestRequest);
+                this.requests(data as GuestRequest);
             } else if (data.type === ConnectType.Answer) {
-                this.responses$.next(data as HostResponse);
+                this.responses(data as HostResponse);
             } else {
                 throw new Error('Received unknown data type: ' + data.type);
             }
