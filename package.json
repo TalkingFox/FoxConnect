@@ -1,11 +1,12 @@
 {
   "name": "foxconnect",
-  "version": "0.0.9",
+  "version": "0.0.11",
   "description": "Establishing a direct connection between two browser instances",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "upload": "npm run build && npm publish"
   },
   "repository": {
     "type": "git",
