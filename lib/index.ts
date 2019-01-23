@@ -4,10 +4,10 @@ import { JoinRoomRequest } from "./models/joinRoomRequest";
 import Peer, { Instance } from 'simple-peer';
 import Socket from 'simple-websocket';
 import { TimedPromise } from "./util/timedPromise";
-import { GuestRequest } from "./models/clientRequest";
 import { CreateRoomRequest } from "./models/createRoomRequest";
 import { SignalResponse, SignalResponses } from "./models/signalResponse";
 import { RoomCreatedResponse } from "./models/roomCreatedResponse";
+import { GuestRequest } from "./models/guestRequest";
 
 export type GuestCallback = (guestName: string) => void;
 
