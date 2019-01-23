@@ -1,6 +1,6 @@
-import { SignalResponse } from "./signalResponse";
+import { SignalRequest } from "./signalRequest";
 
-export class AddToRoomRequest extends SignalResponse {
+export class AddToRoomRequest extends SignalRequest {
     answer: string;
     client: string;
 
