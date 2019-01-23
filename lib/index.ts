@@ -28,15 +28,15 @@ export class Host {
         this.roomCreated = new ManagedPromise();
     }
 
-    public connect(): Promise<void> {
-        const promise = TimedPromise<void>(30 * 1000, (resolve, reject) => {
-            this.socket = new Socket(this.signalServer);
-            this.registerEvents();
-            this.socket.on('connect', () => {
-                resolve();
-            });
+    public createRoom(): Promise<string> {
+        this.socket = new Socket(this.signalServer);
+        this.registerEvents();
+        this.socket.on('connect', () => {
+            const request = new CreateRoomRequest();
+            this.socket.send(JSON.stringify(request));
         });
-        return promise;
+        
+        return this.roomCreated.promise;
     }
 
     private registerEvents(): void {
@@ -53,12 +53,6 @@ export class Host {
                     throw 'Unknown event received: ' + JSON.stringify(decoded);
             }
         });
-    }
-
-    public createRoom(): Promise<string> {
-        const request = new CreateRoomRequest();
-        this.socket.send(JSON.stringify(request));
-        return this.roomCreated.promise;
     }
 
     public closeRoom(): void {
