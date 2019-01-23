@@ -1,4 +1,4 @@
-class ManagedPromise<T> {
+export class ManagedPromise<T> {
     private innerPromise: Promise<T>;
     private innerResolve: (value?: T | PromiseLike<T>) => void;
     private innerReject: (reason?: any) => void;

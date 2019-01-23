@@ -8,6 +8,7 @@ import { CreateRoomRequest } from "./models/createRoomRequest";
 import { SignalResponse, SignalResponses } from "./models/signalResponse";
 import { RoomCreatedResponse } from "./models/roomCreatedResponse";
 import { GuestRequest } from "./models/guestRequest";
+import { ManagedPromise } from "./util/managedPromise";
 
 export type GuestCallback = (guestName: string) => void;
 
