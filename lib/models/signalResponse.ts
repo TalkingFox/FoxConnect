@@ -6,5 +6,6 @@ export enum SignalResponses {
     SignalError = 'error',
     RoomCreated = 'room_created',
     RequestAccepted = 'request_accepted',
-    GuestRequest = 'guest_request'
+    GuestRequest = 'guest_request',
+    RoomJoined = 'room_joined'
 }

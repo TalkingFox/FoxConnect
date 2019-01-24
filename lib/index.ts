@@ -9,6 +9,7 @@ import { SignalResponse, SignalResponses } from "./models/signalResponse";
 import { RoomCreatedResponse } from "./models/roomCreatedResponse";
 import { GuestRequest } from "./models/guestRequest";
 import { ManagedPromise } from "./util/managedPromise";
+import { JoinRoomResponse } from "./models/joinRoomResponse";
 
 export type GuestCallback = (guestName: string) => void;
 
@@ -95,10 +96,27 @@ export class Client {
     private onMessageReceived: MessageReceivedCallback;
     private socket: Socket;
     private roomJoined: ManagedPromise<string>;
+    private decoder = new TextDecoder('utf-8');
 
     constructor(options: FoxConnectOptions) {
         this.socket = new Socket(options.signalServer);
         this.roomJoined = new ManagedPromise();
+        this.registerEvents();
+    }
+
+    private registerEvents(): void {
+        this.socket.on('data', (data: BufferSource) => {
+            const decoded: SignalResponse = JSON.parse(this.decoder.decode(data));;
+            switch(decoded.type) {
+                case SignalResponses.RoomJoined:
+                    this.roomJoined.resolve((<JoinRoomResponse>decoded).answer);
+                    break;
+                case SignalResponses.RequestAccepted:
+                    break;
+                default:
+                    throw 'Unknown event received: ' + JSON.stringify(decoded);
+            }
+        });
     }
 
     public listenForMessages(messageCallback: MessageReceivedCallback): void {
