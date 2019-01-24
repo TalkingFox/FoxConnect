@@ -50,6 +50,8 @@ export class Host {
                 case SignalResponses.GuestRequest:
                     this.registerGuest(<GuestRequest>decoded);
                     break;
+                case SignalResponses.RequestAccepted:
+                    break;
                 default:
                     throw 'Unknown event received: ' + JSON.stringify(decoded);
             }
