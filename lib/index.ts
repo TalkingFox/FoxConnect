@@ -82,7 +82,10 @@ export class Host {
         newPeer.on('connect', () => {
             this.connections.set(request.client, newPeer);
             this.guestJoinedCallback(request.client);
-            newPeer.on('data', this.onMessageReceived);
+            newPeer.on('data', (data: BufferSource) => {
+                const decoded: string = this.decoder.decode(data);
+                this.onMessageReceived(decoded);
+            });
         });
     }
 
