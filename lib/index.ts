@@ -138,6 +138,10 @@ export class Client {
         });
     }
 
+    public leaveRoom(): void {
+        this.peer.destroy();
+    }
+
     public listenForMessages(messageCallback: MessageReceivedCallback): void {
         this.onMessageReceived = messageCallback;
     }
