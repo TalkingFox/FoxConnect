@@ -10,6 +10,7 @@ import { RoomCreatedResponse } from "./models/roomCreatedResponse";
 import { GuestRequest } from "./models/guestRequest";
 import { ManagedPromise } from "./util/managedPromise";
 import { JoinRoomResponse } from "./models/joinRoomResponse";
+import { SignalError } from "./models/signalError";
 
 export type GuestCallback = (guestName: string) => void;
 
@@ -131,6 +132,9 @@ export class Client {
                     this.roomJoined.resolve((<JoinRoomResponse>decoded).answer);
                     break;
                 case SignalResponses.RequestAccepted:
+                    break;
+                case SignalResponses.RoomError:
+                    this.roomJoined.reject((<SignalError>decoded).error);
                     break;
                 default:
                     throw 'Unknown event received: ' + JSON.stringify(decoded);

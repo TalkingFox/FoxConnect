@@ -3,9 +3,9 @@ export abstract class SignalResponse {
 }
 
 export enum SignalResponses {
-    SignalError = 'error',
     RoomCreated = 'room_created',
     RequestAccepted = 'request_accepted',
+    RoomError = 'room_error',
     GuestRequest = 'guest_request',
     RoomJoined = 'room_joined'
 }
