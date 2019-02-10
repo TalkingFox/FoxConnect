@@ -1,6 +1,6 @@
 {
   "name": "foxconnect",
-  "version": "0.0.33",
+  "version": "0.0.36",
   "description": "Establishing a direct connection between two browser instances",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

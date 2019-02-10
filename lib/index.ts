@@ -1,4 +1,3 @@
-import { FoxConnectOptions } from "./models/foxConnectOptions";
 import { AddToRoomRequest } from "./models/addToRoomRequest";
 import { JoinRoomRequest } from "./models/joinRoomRequest";
 import Peer, { Instance } from 'simple-peer';
@@ -11,21 +10,20 @@ import { GuestRequest } from "./models/guestRequest";
 import { ManagedPromise } from "./util/managedPromise";
 import { JoinRoomResponse } from "./models/joinRoomResponse";
 import { SignalError } from "./models/signalError";
+import { FoxClientOptions } from "./models/foxClientOptions";
+import { FoxHostOptions } from "./models/foxHostOptions";
 
-export type GuestCallback = (guestName: string) => void;
 
 export class Host {
     private socket: Socket;
     private connections: Map<string, Instance> = new Map<string, Instance>();
-    private onMessageReceived: MessageReceivedCallback;
     private signalServer: string;
     private decoder: TextDecoder;
-    private guestJoinedCallback: GuestCallback;
 
     private roomCreated: ManagedPromise<string>;
 
-    constructor(options: FoxConnectOptions) {
-        this.signalServer = options.signalServer;
+    constructor(private options: FoxHostOptions) {
+        this.signalServer = this.options.signalServer;
         this.decoder = new TextDecoder('utf-8');
         this.roomCreated = new ManagedPromise();
     }
@@ -63,10 +61,6 @@ export class Host {
         this.socket.destroy();
     }
 
-    public listenForGuests(guestJoinedCallback: GuestCallback): void {
-        this.guestJoinedCallback = guestJoinedCallback;
-    }
-
     private registerGuest(request: GuestRequest): void {
         const newPeer = new Peer({
             initiator: false,
@@ -82,16 +76,16 @@ export class Host {
         })
         newPeer.on('connect', () => {
             this.connections.set(request.client, newPeer);
-            this.guestJoinedCallback(request.client);
+            this.options.onGuestJoined(request.client);
             newPeer.on('data', (data: BufferSource) => {
                 const decoded: string = this.decoder.decode(data);
-                this.onMessageReceived(decoded);
+                this.options.onMessageReceived(request.client, decoded);
             });
         });
-    }
 
-    public listenForMessages(callback: MessageReceivedCallback): void {
-        this.onMessageReceived = callback;
+        newPeer.on('close', () => {
+            this.options.onClientDisconnected(request.client);
+        })
     }
 
     public sendToAll<T>(message: T): void {
@@ -109,16 +103,14 @@ export class Host {
     }
 }
 
-export type MessageReceivedCallback = (message: string) => void;
 
 export class Client {
     private peer: Instance;
-    private onMessageReceived: MessageReceivedCallback;
     private socket: Socket;
     private roomJoined: ManagedPromise<string>;
     private decoder = new TextDecoder('utf-8');
 
-    constructor(options: FoxConnectOptions) {
+    constructor(private options: FoxClientOptions) {
         this.socket = new Socket(options.signalServer);
         this.roomJoined = new ManagedPromise();
         this.registerEvents();
@@ -146,10 +138,6 @@ export class Client {
         this.peer.destroy();
     }
 
-    public listenForMessages(messageCallback: MessageReceivedCallback): void {
-        this.onMessageReceived = messageCallback;
-    }
-
     public joinRoom(room: string): Promise<void> {
         this.peer = new Peer({ initiator: true, trickle: false });
         this.peer.on('signal', (id: any) => {
@@ -168,8 +156,12 @@ export class Client {
         const promise = TimedPromise<void>(30 * 1000, (resolve, reject) => {
             this.peer.on('connect', () => {
                 console.log('connected');
-                this.peer.on('data', this.onMessageReceived);
+                this.peer.on('data', this.options.onMessageReceived);
                 resolve();
+            });
+
+            this.peer.on('close', () => {
+                this.options.onDisconnect();
             });
 
             this.roomJoined.promise.catch((reason: string) => {
