@@ -89,6 +89,20 @@ export class Host {
     public listenForMessages(callback: MessageReceivedCallback): void {
         this.onMessageReceived = callback;
     }
+
+    public sendToAll<T>(message: T): void {
+        this.connections.forEach((peer: Instance) => {
+            peer.send(JSON.stringify(message));
+        });
+    }
+
+    public sendTo<T>(clientId: string, message: T): void {
+        if (!this.connections.has(clientId)) {
+            throw Error('Cannot send message to unregisted client: ' + clientId);
+        }
+        const peer: Instance = this.connections.get(clientId) as Instance;
+        peer.send(JSON.stringify(message));
+    }
 }
 
 export type MessageReceivedCallback = (message: string) => void;
