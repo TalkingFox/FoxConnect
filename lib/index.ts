@@ -165,13 +165,18 @@ export class Client {
                 this.peer.signal(answer);
             });
 
-        const promise = TimedPromise<void>(30 * 1000, (resolve) => {
+        const promise = TimedPromise<void>(30 * 1000, (resolve, reject) => {
             this.peer.on('connect', () => {
                 console.log('connected');
                 this.peer.on('data', this.onMessageReceived);
                 resolve();
             });
+
+            this.roomJoined.promise.catch((reason: string) => {
+                reject(reason);
+            });
         });
+        
         return promise;
     }
 
