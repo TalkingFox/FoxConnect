@@ -84,6 +84,7 @@ export class Host {
         });
 
         newPeer.on('close', () => {
+            this.connections.delete(request.client);
             this.options.onClientDisconnected(request.client);
         })
     }
