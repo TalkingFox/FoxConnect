@@ -20,7 +20,7 @@ export class Host {
     private signalServer: string;
     private decoder: TextDecoder;
 
-    private roomCreated: ManagedPromise<string>;
+    private roomCreated: ManagedPromise<RoomCreatedResponse>;
 
     constructor(private options: FoxHostOptions) {
         this.signalServer = this.options.signalServer;
@@ -28,7 +28,7 @@ export class Host {
         this.roomCreated = new ManagedPromise();
     }
 
-    public createRoom(): Promise<string> {
+    public createRoom(): Promise<RoomCreatedResponse> {
         this.socket = new Socket(this.signalServer);
         this.registerEvents();
         this.socket.on('connect', () => {
@@ -44,7 +44,7 @@ export class Host {
             const decoded: SignalResponse = JSON.parse(this.decoder.decode(data));;
             switch(decoded.type) {
                 case SignalResponses.RoomCreated:
-                    this.roomCreated.resolve((<RoomCreatedResponse>decoded).room);
+                    this.roomCreated.resolve(<RoomCreatedResponse>decoded);
                     break;
                 case SignalResponses.GuestRequest:
                     this.registerGuest(<GuestRequest>decoded);
