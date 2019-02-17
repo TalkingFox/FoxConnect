@@ -167,6 +167,7 @@ export class Client {
 
             this.roomJoined.promise.catch((reason: string) => {
                 reject(reason);
+                this.roomJoined = new ManagedPromise<string>();
             });
         });
         
