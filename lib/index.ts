@@ -12,8 +12,6 @@ import { JoinRoomResponse } from "./models/joinRoomResponse";
 import { SignalError } from "./models/signalError";
 import { FoxClientOptions } from "./models/foxClientOptions";
 import { FoxHostOptions } from "./models/foxHostOptions";
-import { EEXIST } from "constants";
-
 
 export class Host {
     private socket: Socket;
