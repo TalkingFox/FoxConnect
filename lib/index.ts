@@ -90,8 +90,12 @@ export class Host {
     }
 
     public sendToAll<T>(message: T): void {
-        this.connections.forEach((peer: Instance) => {
-            peer.send(JSON.stringify(message));
+        this.connections.forEach((peer: Instance, key: string) => {
+            try {
+                peer.send(JSON.stringify(message));
+            } catch (error) {
+                this.options.onMessageFailed(key, error);
+            }
         });
     }
 
@@ -103,7 +107,6 @@ export class Host {
         peer.send(JSON.stringify(message));
     }
 }
-
 
 export class Client {
     private peer: Instance;
@@ -175,6 +178,10 @@ export class Client {
     }
 
     public send<T>(message: T): void {
-        this.peer.send(JSON.stringify(message));
+        try {
+            this.peer.send(JSON.stringify(message));
+        } catch (error) {
+            this.options.onMessageFailed(message);
+        }
     }
 }
