@@ -12,6 +12,7 @@ import { JoinRoomResponse } from "./models/joinRoomResponse";
 import { SignalError } from "./models/signalError";
 import { FoxClientOptions } from "./models/foxClientOptions";
 import { FoxHostOptions } from "./models/foxHostOptions";
+import { EEXIST } from "constants";
 
 
 export class Host {
@@ -59,6 +60,15 @@ export class Host {
 
     public closeRoom(): void {
         this.socket.destroy();
+    }
+
+    public kickGuest(clientId: string): void {
+        const peer: Instance = this.connections.get(clientId) as Instance;
+        if (!peer) {
+            return;
+        }
+        peer.destroy();
+        this.connections.delete(clientId);
     }
 
     private registerGuest(request: GuestRequest): void {
